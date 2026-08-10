@@ -1,14 +1,65 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Storefront Experiment Lab</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  <main id="app"></main>
+  <main id="app">
+    <header>Nova Store</header>
+    <li>
+      <ol> Home</ol>
+      <ol>Products</ol>
+      <ol>Cart</ol>
+    </li>
+    <p>
+    <h1> Experimetns</h1>
+    <p>description</p>
+    </p>
+
+    <section class="product-grid" id="product-grid">
+      <article class="product-card" data-product-id="product-1">
+
+        <img src="/assets/bag.png" alt="product image" />
+        <p> product 1</p>
+        <p> price: 400</p>
+        <button type="button" class="add-to-cart-button">Add to Cart</button>
+
+      </article>
+      <article class="product-card" data-product-id="product-1">
+
+        <img src="/assets/headphone.png" alt="product image" />
+        <p> product 2</p>
+        <p> price: 400</p>
+        <button type="button" class="add-to-cart-button">Add to Cart</button>
+
+      </article>
+
+      <article class="product-card" data-product-id="product-1">
+
+        <img src="/assets/shoes.png" alt="product image" />
+        <p> product 3</p>
+        <p> price: 400</p>
+        <button type="button" class="add-to-cart-button">Add to Cart</button>
+
+      </article>
+
+      <article class="product-card" data-product-id="product-1">
+
+        <img src="/assets/watch.png" alt="product image" />
+        <p> product 4</p>
+        <p> price: 400</p>
+        <button type="button" class="add-to-cart-button">Add to Cart</button>
+
+      </article>
+    </section>
+  </main>
 
   <script src="app.js"></script>
 </body>
+
 </html>

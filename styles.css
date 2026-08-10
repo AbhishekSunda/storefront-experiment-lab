@@ -7,3 +7,33 @@
 body {
   margin: 0;
 }
+
+.product-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.product-grid .product-card {
+  min-width: 0;
+}
+
+.product-grid .product-card img {
+  width: 100%;
+}
+
+.add-to-cart-button:hover {
+  cursor: pointer;
+}
+
+
+@media (min-width:768px) {
+  .product-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width:1024px) {
+  .product-grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
