@@ -2,32 +2,91 @@
 
 const PROMO_CARD_ID = 'nova-promo-card';
 const PROMO_CARD_CLASS = 'promo-card';
+const PROMO_CTA_CLASS = 'promo-cta-button';
 const PRODUCT_GRID_SELECTOR = '#product-grid';
 const PRODUCT_CARD_SELECTOR = '.product-card';
+const ADD_TO_CART_SELECTOR = '.add-to-cart-button';
+const PROMO_CTA_SELECTOR = `.${PROMO_CTA_CLASS}`;
 
+let trackedGrid = null;
 
-function handleGridClick(event){
-     if(!(event.target instanceof HTMLElement))return;
+function handleGridClick(event) {
+  if (!(event.target instanceof Element)) {
+    return;
+  }
 
-    const clickedProduct = event.target.closest('.product-card');
-    if(!clickedProduct || !(event.currentTarget.contains(clickedProduct)))return;
+  const grid = event.currentTarget;
 
-    console.log("Add to cart: " , clickedProduct?.dataset?.productId);
+  if (!(grid instanceof Element)) {
+    return;
+  }
+
+  const addToCartButton = event.target.closest(
+    ADD_TO_CART_SELECTOR
+  );
+
+  if (
+    addToCartButton &&
+    grid.contains(addToCartButton)
+  ) {
+    const productCard = addToCartButton.closest(
+      PRODUCT_CARD_SELECTOR
+    );
+
+    if (!productCard || !grid.contains(productCard)) {
+      return;
+    }
+
+    console.log(
+      `Add to cart: ${productCard.dataset.productId}`
+    );
+
+    return;
+  }
+
+  const promoButton = event.target.closest(
+    PROMO_CTA_SELECTOR
+  );
+
+  if (!promoButton || !grid.contains(promoButton)) {
+    return;
+  }
+
+  const promoCard = promoButton.closest(
+    `#${PROMO_CARD_ID}`
+  );
+
+  if (!promoCard || !grid.contains(promoCard)) {
+    return;
+  }
+
+  console.log(`Promo clicked: ${promoCard.id}`);
 }
 
-function attachGridTracking(){
-    const productGrid = document.getElementById('product-grid');
-    if(productGrid){
-        productGrid.addEventListener('click', handleGridClick);
-    }
+function attachGridTracking() {
+  const productGrid = document.querySelector(
+    PRODUCT_GRID_SELECTOR
+  );
+
+  if (!productGrid || trackedGrid === productGrid) {
+    return;
+  }
+
+  detachGridTracking();
+  productGrid.addEventListener('click', handleGridClick);
+  trackedGrid = productGrid;
 }
 
-function detachGridTracking(){
-    const productGrid = document.getElementById('product-grid');
-    if(productGrid){
-        productGrid.removeEventListener('click', handleGridClick);
-    }
+function detachGridTracking() {
+  if (!trackedGrid) {
+    return;
+  }
 
+  trackedGrid.removeEventListener(
+    'click',
+    handleGridClick
+  );
+  trackedGrid = null;
 }
 
 function createPromoCard() {
@@ -39,14 +98,13 @@ function createPromoCard() {
   heading.textContent = 'Summer Special';
 
   const description = document.createElement('p');
-  description.textContent = 'Get 20% off selected products.';
+  description.textContent =
+    'Get 20% off selected products.';
 
   const button = document.createElement('button');
   button.type = 'button';
   button.textContent = 'Explore Offer';
-  button.classList.add('promo-cta-button');
-
-  button.addEventListener('click', () => console.log('Promo clicked: nova-promo-card'));
+  button.classList.add(PROMO_CTA_CLASS);
 
   promoCard.append(heading, description, button);
 
@@ -66,8 +124,6 @@ function insertPromoCard() {
     return;
   }
 
-  attachGridTracking();
-
   const productCards = productGrid.querySelectorAll(
     PRODUCT_CARD_SELECTOR
   );
@@ -80,21 +136,30 @@ function insertPromoCard() {
   secondProductCard.after(createPromoCard());
 }
 
+function initializeExperiment() {
+  insertPromoCard();
+  attachGridTracking();
+}
+
 function activateExperiment() {
   if (document.readyState === 'loading') {
     document.addEventListener(
       'DOMContentLoaded',
-      insertPromoCard,
+      initializeExperiment,
       { once: true }
     );
 
     return;
   }
 
-  insertPromoCard();
+  initializeExperiment();
 }
 
 function deactivateExperiment() {
+  document.removeEventListener(
+    'DOMContentLoaded',
+    initializeExperiment
+  );
   document.getElementById(PROMO_CARD_ID)?.remove();
   detachGridTracking();
 }
