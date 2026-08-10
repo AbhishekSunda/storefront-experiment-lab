@@ -1,65 +1,71 @@
 'use strict';
 
-// Storefront and experiment behaviour will be added task by task.
+const PROMO_CARD_ID = 'nova-promo-card';
+const PROMO_CARD_CLASS = 'promo-card';
+const PRODUCT_GRID_SELECTOR = '#product-grid';
+const PRODUCT_CARD_SELECTOR = '.product-card';
 
-function createPromoCard(){
-    const promoCard = document.querySelector('[wingify-promo-card]');
-    if(promoCard)return promoCard;
+function createPromoCard() {
+  const promoCard = document.createElement('article');
+  promoCard.id = PROMO_CARD_ID;
+  promoCard.classList.add(PROMO_CARD_CLASS);
 
+  const heading = document.createElement('h3');
+  heading.textContent = 'Summer Special';
 
-    
-    const newCard = document.createElement('article');
-    newCard.setAttribute('id', "nova-promo-card");
-    newCard.classList.add('promo-card', 'product-card');
+  const description = document.createElement('p');
+  description.textContent = 'Get 20% off selected products.';
 
-    const header = document.createElement('h3');
-    header.textContent = "Summer Special";
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = 'Explore Offer';
 
-    const p = document.createElement('p');
-    p.textContent = "Get 20% off selected products."
+  promoCard.append(heading, description, button);
 
-    const button = document.createElement('button');
-
-    button.textContent = "Explore Offer";
-    button.setAttribute('type', 'button');
-    button.addEventListener('click', ()=>{
-        console.log("promotional button clicked!");
-    })
-
-    newCard.append(header, p, button);
-
-    return newCard;
-
+  return promoCard;
 }
 
-function insertElement(){
-    const activePromoCard = document.querySelector('#nova-promo-card');
-    if(activePromoCard)return;
+function insertPromoCard() {
+  if (document.getElementById(PROMO_CARD_ID)) {
+    return;
+  }
 
-    const newPromoCard = createPromoCard();
+  const productGrid = document.querySelector(
+    PRODUCT_GRID_SELECTOR
+  );
 
-    const grid = document.querySelector('#product-grid');
-    if(!grid)return;
-    const secondProductCard = grid.querySelector('[data-product-id="product-2"]');
-    if(!secondProductCard)return;
-    secondProductCard.after(newPromoCard);
+  if (!productGrid) {
+    return;
+  }
 
+  const productCards = productGrid.querySelectorAll(
+    PRODUCT_CARD_SELECTOR
+  );
+  const secondProductCard = productCards[1];
 
+  if (!secondProductCard) {
+    return;
+  }
+
+  secondProductCard.after(createPromoCard());
 }
 
-function activateExperiment(){
-    const productGrid = document.querySelector('#product-grid');
-    if(!productGrid){
-        document.addEventListener('DOMContentLoaded', insertElement, {once:true});
-        return;
-    }
+function activateExperiment() {
+  if (document.readyState === 'loading') {
+    document.addEventListener(
+      'DOMContentLoaded',
+      insertPromoCard,
+      { once: true }
+    );
 
-    insertElement();
+    return;
+  }
+
+  insertPromoCard();
 }
 
-function deactivateExperiment(){
-    const activePromoCard = document.querySelector('#nova-promo-card');
-    if(activePromoCard)activePromoCard.remove();
+function deactivateExperiment() {
+  document.getElementById(PROMO_CARD_ID)?.remove();
 }
 
 activateExperiment();
