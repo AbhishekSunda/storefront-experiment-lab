@@ -16,6 +16,25 @@ let experimentObserver = null;
 let reconcileScheduled = false;
 let isExperimentActive = false;
 
+const VALID_VIEWS = [
+  'home',
+  'products',
+  'cart'
+];
+
+const DEFAULT_VIEW = 'products';
+
+function getCurrentView() {
+  // Read the URL search parameters.
+
+  const searchParams = new URLSearchParams(window.location.search);
+  if (VALID_VIEWS.includes(searchParams.get('view'))) return searchParams.get('view');
+  return DEFAULT_VIEW;
+  // Get the value of the "view" parameter.
+  // Return it if it exists in VALID_VIEWS.
+  // Otherwise return DEFAULT_VIEW.
+}
+
 function handleGridClick(event) {
   if (!(event.target instanceof Element)) {
     return;
