@@ -25,14 +25,16 @@ const VALID_VIEWS = [
 const DEFAULT_VIEW = 'products';
 
 function getCurrentView() {
-  // Read the URL search parameters.
+  const searchParams = new URLSearchParams(
+    window.location.search
+  );
+  const currentView = searchParams.get('view');
 
-  const searchParams = new URLSearchParams(window.location.search);
-  if (VALID_VIEWS.includes(searchParams.get('view'))) return searchParams.get('view');
+  if (VALID_VIEWS.includes(currentView)) {
+    return currentView;
+  }
+
   return DEFAULT_VIEW;
-  // Get the value of the "view" parameter.
-  // Return it if it exists in VALID_VIEWS.
-  // Otherwise return DEFAULT_VIEW.
 }
 
 function handleGridClick(event) {
