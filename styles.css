@@ -235,14 +235,25 @@ button:focus-visible {
   gap: 0.75rem;
 }
 
-.route-controls button:hover {
+.route-controls button {
+  min-height: 44px;
+  padding: 0.65rem 1rem;
+  border: 1px solid #173b27;
+  border-radius: 0.65rem;
+  color: #173b27;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.route-controls button:focus-visible {
-  outline: 1px solid green;
+.route-controls button:hover {
+  color: #ffffff;
+  background: #285c3d;
 }
 
 .route-status {
-  margin-bottom: 10px;
+  min-height: 1.5em;
+  margin: 0.75rem 0 1rem;
+  color: #526158;
 }
