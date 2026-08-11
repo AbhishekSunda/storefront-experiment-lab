@@ -5,8 +5,11 @@ const PROMO_CARD_CLASS = 'promo-card';
 const PROMO_CTA_CLASS = 'promo-cta-button';
 const PRODUCT_GRID_SELECTOR = '#product-grid';
 const PRODUCT_CARD_SELECTOR = '.product-card';
+const PRODUCTS_SECTION_SELECTOR = '.products-section';
 const ADD_TO_CART_SELECTOR = '.add-to-cart-button';
 const PROMO_CTA_SELECTOR = `.${PROMO_CTA_CLASS}`;
+const RERENDER_BUTTON_SELECTOR =
+  '#simulate-rerender-button';
 
 let trackedGrid = null;
 let experimentObserver = null;
@@ -66,11 +69,7 @@ function handleGridClick(event) {
   console.log(`Promo clicked: ${promoCard.id}`);
 }
 
-function attachGridTracking() {
-  const productGrid = document.querySelector(
-    PRODUCT_GRID_SELECTOR
-  );
-
+function attachGridTracking(productGrid) {
   if (!productGrid || trackedGrid === productGrid) {
     return;
   }
@@ -114,16 +113,11 @@ function createPromoCard() {
   return promoCard;
 }
 
-function insertPromoCard() {
-  if (document.getElementById(PROMO_CARD_ID)) {
-    return;
-  }
-
-  const productGrid = document.querySelector(
-    PRODUCT_GRID_SELECTOR
-  );
-
-  if (!productGrid) {
+function insertPromoCard(productGrid) {
+  if (
+    !productGrid ||
+    document.getElementById(PROMO_CARD_ID)
+  ) {
     return;
   }
 
@@ -140,78 +134,135 @@ function insertPromoCard() {
 }
 
 function simulateProductGridRerender() {
-  const productGrid = document.querySelector(PRODUCT_GRID_SELECTOR);
-  if (!productGrid) return;
+  const currentGrid = document.querySelector(
+    PRODUCT_GRID_SELECTOR
+  );
 
-  const replacementGrid = productGrid.cloneNode(true);
+  if (!currentGrid) {
+    return;
+  }
 
-  productGrid.replaceWith(replacementGrid);
+  const replacementGrid = currentGrid.cloneNode(true);
+
+  replacementGrid
+    .querySelector(`#${PROMO_CARD_ID}`)
+    ?.remove();
+
+  currentGrid.replaceWith(replacementGrid);
 }
 
-function initializeExperiment() {
-  isExperimentActive = true;
-  insertPromoCard();
-  attachGridTracking();
+function attachRerenderSimulator() {
+  const rerenderButton = document.querySelector(
+    RERENDER_BUTTON_SELECTOR
+  );
+
+  if (!rerenderButton) {
+    return;
+  }
+
+  rerenderButton.addEventListener(
+    'click',
+    simulateProductGridRerender
+  );
+}
+
+function scheduleReconciliation() {
+  if (!isExperimentActive || reconcileScheduled) {
+    return;
+  }
+
+  reconcileScheduled = true;
+
   queueMicrotask(() => {
     reconcileScheduled = false;
     reconcileExperiment();
   });
 }
 
+function reconcileExperiment() {
+  if (!isExperimentActive) {
+    return;
+  }
+
+  const currentGrid = document.querySelector(
+    PRODUCT_GRID_SELECTOR
+  );
+
+  if (!currentGrid) {
+    detachGridTracking();
+    return;
+  }
+
+  attachGridTracking(currentGrid);
+  insertPromoCard(currentGrid);
+}
+
+function startExperimentObserver() {
+  if (experimentObserver) {
+    return;
+  }
+
+  const productsSection = document.querySelector(
+    PRODUCTS_SECTION_SELECTOR
+  );
+
+  if (!productsSection) {
+    return;
+  }
+
+  experimentObserver = new MutationObserver(() => {
+    scheduleReconciliation();
+  });
+
+  experimentObserver.observe(productsSection, {
+    childList: true,
+    subtree: true
+  });
+}
+
+function stopExperimentObserver() {
+  experimentObserver?.disconnect();
+  experimentObserver = null;
+}
+
+function initializeExperiment() {
+  if (!isExperimentActive) {
+    return;
+  }
+
+  attachRerenderSimulator();
+  reconcileExperiment();
+  startExperimentObserver();
+}
+
 function activateExperiment() {
+  isExperimentActive = true;
+
   if (document.readyState === 'loading') {
     document.addEventListener(
       'DOMContentLoaded',
-      startExperimentObserver,
+      initializeExperiment,
       { once: true }
     );
 
     return;
   }
 
-  startExperimentObserver();
+  initializeExperiment();
 }
 
 function deactivateExperiment() {
+  isExperimentActive = false;
+
   document.removeEventListener(
     'DOMContentLoaded',
     initializeExperiment
   );
+
+  stopExperimentObserver();
+  reconcileScheduled = false;
   document.getElementById(PROMO_CARD_ID)?.remove();
   detachGridTracking();
-  reconcileScheduled = false;
-  isExperimentActive = false;
-
 }
-
-function startExperimentObserver() {
-
-  const productSection = document.querySelector('.products-section');
-  if (!productSection) return;
-  let experimentObserver = new MutationObserver(() => {
-    initializeExperiment();
-  })
-
-  experimentObserver.observe(productSection, {
-    subtree: true,
-    childList: true
-  });
-
-  initializeExperiment();
-}
-
-function stopExperimentObserver() {
-  if (experimentObserver) experimentObserver.disconnect();
-  deactivateExperiment();
-}
-
-function reconcileExperiment() {
-  if (reconcileScheduled) {
-    return;
-  }
-  reconcileScheduled = true;
-  simulateProductGridRerender();
-}
-
 
 activateExperiment();
