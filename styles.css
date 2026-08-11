@@ -228,3 +228,21 @@ button:focus-visible {
 .promo-card button:hover {
   background: #7c2d12;
 }
+
+.route-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.route-controls button:hover {
+  cursor: pointer;
+}
+
+.route-controls button:focus-visible {
+  outline: 1px solid green;
+}
+
+.route-status {
+  margin-bottom: 10px;
+}

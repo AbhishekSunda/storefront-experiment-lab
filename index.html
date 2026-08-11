@@ -34,6 +34,22 @@
     <section class="products-section" id="products" aria-labelledby="products-title">
       <h2 id="products-title">Featured Products</h2>
 
+      <div class="route-controls" id="route-controls" aria-label="Store views">
+        <button type="button" data-view="home">
+          Home View
+        </button>
+
+        <button type="button" data-view="products">
+          Products View
+        </button>
+
+        <button type="button" data-view="cart">
+          Cart View
+        </button>
+      </div>
+
+      <p id="route-status" class="route-status" aria-live="polite"></p>
+
       <button type="button" id="simulate-rerender-button">
         Simulate Product Grid Rerender
       </button>

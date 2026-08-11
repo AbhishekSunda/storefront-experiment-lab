@@ -265,4 +265,17 @@ function deactivateExperiment() {
   detachGridTracking();
 }
 
+const VALID_VIEWS = [
+  'home',
+  'products',
+  'cart'
+];
+
+
+function getCurrentView() { }
+function navigateToView(view) { }
+function handleRouteControlClick(event) { }
+function renderHostView() { }
+function initializeHostRouting() { }
+
 activateExperiment();
