@@ -28,7 +28,6 @@ const ROUTE_CONTROLS_SELECTOR = '#route-controls';
 const ROUTE_STATUS_SELECTOR = '#route-status';
 const ROUTE_CHANGE_EVENT = 'nova:routechange';
 const ROUTE_BUTTON_SELECTOR = 'button[data-view]';
-let routeStatus = null;
 
 function getCurrentView() {
   const searchParams = new URLSearchParams(
@@ -45,36 +44,57 @@ function getCurrentView() {
 
 
 function navigateToView(view) {
-  // 1. Return early if view is invalid.
-  if (!(VALID_VIEWS.includes(view))) return;
-
-  // 2. Create a URL from window.location.href.
+  if (!VALID_VIEWS.includes(view)) {
+    return;
+  }
 
   const url = new URL(window.location.href);
   url.searchParams.set('view', view);
 
   history.pushState({ view }, '', url);
-  routeStatus = view;
 
-  window.dispatchEvent(new CustomEvent(ROUTE_CHANGE_EVENT, { detail: { view } }));
-  // 3. Set the "view" search parameter.
-  // 4. Call history.pushState().
-  // 5. Update the route-status text.
-  // 6. Dispatch nova:routechange.
+  const routeStatusElement = document.querySelector(
+    ROUTE_STATUS_SELECTOR
+  );
+
+  if (routeStatusElement) {
+    const formattedView =
+      view.charAt(0).toUpperCase() + view.slice(1);
+
+    routeStatusElement.textContent =
+      `Current view: ${formattedView}`;
+  }
+
+  window.dispatchEvent(
+    new CustomEvent(ROUTE_CHANGE_EVENT, {
+      detail: { view }
+    })
+  );
 }
 
 function handleRouteControlClick(event) {
-  if (!(event.target instanceof Element)) return;
+  if (!(event.target instanceof Element)) {
+    return;
+  }
 
-  const clickedRoute = event.target.closest('button');
+  const routeControls = event.currentTarget;
 
-  const routeControls = document.querySelector(ROUTE_CONTROLS_SELECTOR);
-  if (!routeControls.contains(clickedRoute)) return;
+  if (!(routeControls instanceof Element)) {
+    return;
+  }
 
-  console.log(clickedRoute.dataset.view);
+  const clickedRoute = event.target.closest(
+    ROUTE_BUTTON_SELECTOR
+  );
+
+  if (
+    !clickedRoute ||
+    !routeControls.contains(clickedRoute)
+  ) {
+    return;
+  }
 
   navigateToView(clickedRoute.dataset.view);
-
 }
 
 function initializeHostRouting() {
@@ -311,21 +331,17 @@ function initializeExperiment() {
 function activateExperiment() {
   isExperimentActive = true;
 
-  const initialize = () => {
-    initializeExperiment();
-    initializeHostRouting();
-  }
   if (document.readyState === 'loading') {
     document.addEventListener(
       'DOMContentLoaded',
-      initialize,
+      initializeExperiment,
       { once: true }
     );
 
     return;
   }
 
-  initialize();
+  initializeExperiment();
 }
 
 function deactivateExperiment() {
@@ -343,3 +359,13 @@ function deactivateExperiment() {
 }
 
 activateExperiment();
+
+if (document.readyState === 'loading') {
+  document.addEventListener(
+    'DOMContentLoaded',
+    initializeHostRouting,
+    { once: true }
+  );
+} else {
+  initializeHostRouting();
+}
