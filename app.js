@@ -43,13 +43,15 @@ function getCurrentView() {
 }
 
 function handlePopState() {
-  // Read the view from the current URL.
-
   const view = getCurrentView();
-  navigateToView(view);
+
   renderHostView(view);
-  // Render that view.
-  // Dispatch nova:routechange with the view.
+
+  window.dispatchEvent(
+    new CustomEvent(ROUTE_CHANGE_EVENT, {
+      detail: { view }
+    })
+  );
 }
 
 
@@ -72,23 +74,19 @@ function navigateToView(view) {
 }
 
 function renderHostView(view) {
-
   const routeStatusElement = document.querySelector(
     ROUTE_STATUS_SELECTOR
   );
 
-  if (routeStatusElement) {
-    const formattedView =
-      view.charAt(0).toUpperCase() + view.slice(1);
-
-    routeStatusElement.textContent =
-      `Current view: ${formattedView}`;
+  if (!routeStatusElement) {
+    return;
   }
 
-  // Find ROUTE_STATUS_SELECTOR.
-  // Exit safely if it is missing.
-  // Capitalize the view.
-  // Update its textContent.
+  const formattedView =
+    view.charAt(0).toUpperCase() + view.slice(1);
+
+  routeStatusElement.textContent =
+    `Current view: ${formattedView}`;
 }
 
 function handleRouteControlClick(event) {
