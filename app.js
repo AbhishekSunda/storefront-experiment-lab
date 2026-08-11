@@ -9,6 +9,9 @@ const ADD_TO_CART_SELECTOR = '.add-to-cart-button';
 const PROMO_CTA_SELECTOR = `.${PROMO_CTA_CLASS}`;
 
 let trackedGrid = null;
+let experimentObserver = null;
+let reconcileScheduled = false;
+let isExperimentActive = false;
 
 function handleGridClick(event) {
   if (!(event.target instanceof Element)) {
@@ -136,23 +139,37 @@ function insertPromoCard() {
   secondProductCard.after(createPromoCard());
 }
 
+function simulateProductGridRerender() {
+  const productGrid = document.querySelector(PRODUCT_GRID_SELECTOR);
+  if (!productGrid) return;
+
+  const replacementGrid = productGrid.cloneNode(true);
+
+  productGrid.replaceWith(replacementGrid);
+}
+
 function initializeExperiment() {
+  isExperimentActive = true;
   insertPromoCard();
   attachGridTracking();
+  queueMicrotask(() => {
+    reconcileScheduled = false;
+    reconcileExperiment();
+  });
 }
 
 function activateExperiment() {
   if (document.readyState === 'loading') {
     document.addEventListener(
       'DOMContentLoaded',
-      initializeExperiment,
+      startExperimentObserver,
       { once: true }
     );
 
     return;
   }
 
-  initializeExperiment();
+  startExperimentObserver();
 }
 
 function deactivateExperiment() {
@@ -162,6 +179,39 @@ function deactivateExperiment() {
   );
   document.getElementById(PROMO_CARD_ID)?.remove();
   detachGridTracking();
+  reconcileScheduled = false;
+  isExperimentActive = false;
+
 }
+
+function startExperimentObserver() {
+
+  const productSection = document.querySelector('.products-section');
+  if (!productSection) return;
+  let experimentObserver = new MutationObserver(() => {
+    initializeExperiment();
+  })
+
+  experimentObserver.observe(productSection, {
+    subtree: true,
+    childList: true
+  });
+
+  initializeExperiment();
+}
+
+function stopExperimentObserver() {
+  if (experimentObserver) experimentObserver.disconnect();
+  deactivateExperiment();
+}
+
+function reconcileExperiment() {
+  if (reconcileScheduled) {
+    return;
+  }
+  reconcileScheduled = true;
+  simulateProductGridRerender();
+}
+
 
 activateExperiment();

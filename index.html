@@ -1,74 +1,80 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Store</title>
-    <link rel="stylesheet" href="styles.css">
-  </head>
 
-  <body>
-    <header class="site-header">
-      <a class="site-logo" href="#home">Nova Store</a>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nova Store</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
 
-      <nav aria-label="Primary navigation">
-        <ul class="navigation-list">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#products">Products</a></li>
-          <li><a href="#cart">Cart</a></li>
-        </ul>
-      </nav>
-    </header>
+<body>
+  <header class="site-header">
+    <a class="site-logo" href="#home">Nova Store</a>
 
-    <main>
-      <section class="hero" id="home" aria-labelledby="hero-title">
-        <p class="eyebrow">Everyday essentials</p>
-        <h1 id="hero-title">Find something made for you</h1>
-        <p>
-          Explore practical products chosen to make your everyday routine
-          simpler and better.
-        </p>
+    <nav aria-label="Primary navigation">
+      <ul class="navigation-list">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#cart">Cart</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <p class="eyebrow">Everyday essentials</p>
+      <h1 id="hero-title">Find something made for you</h1>
+      <p>
+        Explore practical products chosen to make your everyday routine
+        simpler and better.
+      </p>
+    </section>
+
+    <section class="products-section" id="products" aria-labelledby="products-title">
+      <h2 id="products-title">Featured Products</h2>
+
+      <button type="button" id="simulate-rerender-button">
+        Simulate Product Grid Rerender
+      </button>
+
+      <section class="product-grid" id="product-grid" aria-label="Featured product list">
+        <article class="product-card" data-product-id="product-1">
+          <img src="assets/bag.png" alt="Black everyday backpack">
+          <h3>Everyday Backpack</h3>
+          <p class="product-price">₹400</p>
+          <button type="button" class="add-to-cart-button">Add to Cart</button>
+        </article>
+
+        <article class="product-card" data-product-id="product-2">
+          <img src="assets/headphone.png" alt="Over-ear wireless headphones">
+          <h3>Wireless Headphones</h3>
+          <p class="product-price">₹400</p>
+          <button type="button" class="add-to-cart-button">Add to Cart</button>
+        </article>
+
+        <article class="product-card" data-product-id="product-3">
+          <img src="assets/shoes.png" alt="Pair of casual sneakers">
+          <h3>Casual Sneakers</h3>
+          <p class="product-price">₹400</p>
+          <button type="button" class="add-to-cart-button">Add to Cart</button>
+        </article>
+
+        <article class="product-card" data-product-id="product-4">
+          <img src="assets/watch.png" alt="Classic wristwatch">
+          <h3>Classic Watch</h3>
+          <p class="product-price">₹400</p>
+          <button type="button" class="add-to-cart-button">Add to Cart</button>
+        </article>
       </section>
+    </section>
+  </main>
 
-      <section class="products-section" id="products" aria-labelledby="products-title">
-        <h2 id="products-title">Featured Products</h2>
+  <footer class="site-footer" id="cart">
+    <p>&copy; 2026 Nova Store. All rights reserved.</p>
+  </footer>
 
-        <section class="product-grid" id="product-grid" aria-label="Featured product list">
-          <article class="product-card" data-product-id="product-1">
-            <img src="assets/bag.png" alt="Black everyday backpack">
-            <h3>Everyday Backpack</h3>
-            <p class="product-price">₹400</p>
-            <button type="button" class="add-to-cart-button">Add to Cart</button>
-          </article>
+  <script src="app.js"></script>
+</body>
 
-          <article class="product-card" data-product-id="product-2">
-            <img src="assets/headphone.png" alt="Over-ear wireless headphones">
-            <h3>Wireless Headphones</h3>
-            <p class="product-price">₹400</p>
-            <button type="button" class="add-to-cart-button">Add to Cart</button>
-          </article>
-
-          <article class="product-card" data-product-id="product-3">
-            <img src="assets/shoes.png" alt="Pair of casual sneakers">
-            <h3>Casual Sneakers</h3>
-            <p class="product-price">₹400</p>
-            <button type="button" class="add-to-cart-button">Add to Cart</button>
-          </article>
-
-          <article class="product-card" data-product-id="product-4">
-            <img src="assets/watch.png" alt="Classic wristwatch">
-            <h3>Classic Watch</h3>
-            <p class="product-price">₹400</p>
-            <button type="button" class="add-to-cart-button">Add to Cart</button>
-          </article>
-        </section>
-      </section>
-    </main>
-
-    <footer class="site-footer" id="cart">
-      <p>&copy; 2026 Nova Store. All rights reserved.</p>
-    </footer>
-
-    <script src="app.js"></script>
-  </body>
 </html>
