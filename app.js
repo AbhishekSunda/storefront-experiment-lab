@@ -24,6 +24,12 @@ const VALID_VIEWS = [
 
 const DEFAULT_VIEW = 'products';
 
+const ROUTE_CONTROLS_SELECTOR = '#route-controls';
+const ROUTE_STATUS_SELECTOR = '#route-status';
+const ROUTE_CHANGE_EVENT = 'nova:routechange';
+const ROUTE_BUTTON_SELECTOR = 'button[data-view]';
+let routeStatus = null;
+
 function getCurrentView() {
   const searchParams = new URLSearchParams(
     window.location.search
@@ -36,6 +42,50 @@ function getCurrentView() {
 
   return DEFAULT_VIEW;
 }
+
+
+function navigateToView(view) {
+  // 1. Return early if view is invalid.
+  if (!(VALID_VIEWS.includes(view))) return;
+
+  // 2. Create a URL from window.location.href.
+
+  const url = new URL(window.location.href);
+  url.searchParams.set('view', view);
+
+  history.pushState({ view }, '', url);
+  routeStatus = view;
+
+  window.dispatchEvent(new CustomEvent(ROUTE_CHANGE_EVENT, { detail: { view } }));
+  // 3. Set the "view" search parameter.
+  // 4. Call history.pushState().
+  // 5. Update the route-status text.
+  // 6. Dispatch nova:routechange.
+}
+
+function handleRouteControlClick(event) {
+  if (!(event.target instanceof Element)) return;
+
+  const clickedRoute = event.target.closest('button');
+
+  const routeControls = document.querySelector(ROUTE_CONTROLS_SELECTOR);
+  if (!routeControls.contains(clickedRoute)) return;
+
+  console.log(clickedRoute.dataset.view);
+
+  navigateToView(clickedRoute.dataset.view);
+
+}
+
+function initializeHostRouting() {
+  const routeControls = document.querySelector(ROUTE_CONTROLS_SELECTOR);
+  if (!routeControls) return;
+
+  routeControls.addEventListener('click', handleRouteControlClick);
+}
+
+
+
 
 function handleGridClick(event) {
   if (!(event.target instanceof Element)) {
@@ -256,20 +306,26 @@ function initializeExperiment() {
   startExperimentObserver();
 }
 
+
+
 function activateExperiment() {
   isExperimentActive = true;
 
+  const initialize = () => {
+    initializeExperiment();
+    initializeHostRouting();
+  }
   if (document.readyState === 'loading') {
     document.addEventListener(
       'DOMContentLoaded',
-      initializeExperiment,
+      initialize,
       { once: true }
     );
 
     return;
   }
 
-  initializeExperiment();
+  initialize();
 }
 
 function deactivateExperiment() {
